@@ -156,7 +156,7 @@ int main()
 
 	// Model
 	mainModel = new Model();
-	std::string modelPath = "devola_-_nier_automata/Rigged.gltf";
+	std::string modelPath = "world/map.gltf";
 	mainModel->LoadModel(modelPath);
 	entityList.push_back(mainModel);
 	currModel = mainModel;
@@ -255,11 +255,13 @@ int main()
 
 		skybox->DrawSkybox(viewMat, projMat);
 
-		terrain->UseShader();
+		
+		/*terrain->UseShader();
 		terrain->GetShader()->UseDirectionalLight(directionalLight);
 		terrain->GetShader()->UsePointLights(pointLights, pointLightCount);
 		terrain->GetShader()->UseEyePos(camPos);
-		terrain->DrawTerrain(viewMat, projMat);
+		terrain->DrawTerrain(viewMat, projMat);*/
+		
 
 		pointLightShader->UseShader();
 		for (int i = 0; i < pointLightCount; i++)
