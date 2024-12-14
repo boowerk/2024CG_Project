@@ -156,6 +156,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="AssimpGLMHelpers.cpp" />
     <ClCompile Include="Bone.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FreeCamera.cpp" />
     <ClCompile Include="CameraBase.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AssimpGLMHelpers.h" />
     <ClInclude Include="Bone.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="FreeCamera.h" />
     <ClInclude Include="CameraBase.h" />
     <ClInclude Include="CommonValues.h" />

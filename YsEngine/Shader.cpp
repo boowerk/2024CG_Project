@@ -138,6 +138,9 @@ void Shader::ClearShader()
 void Shader::GetVariableLocations()
 {
 	modelMatLoc = glGetUniformLocation(shaderID, "modelMat");
+	if (modelMatLoc < 0) {
+		std::cout << "모델 변환 행렬을 가져오지 못함" << '\n';
+	}
 	PVMLoc = glGetUniformLocation(shaderID, "PVM");
 	colorSamplerLoc = glGetUniformLocation(shaderID, "colorSampler");
 	normalSamplerLoc = glGetUniformLocation(shaderID, "normalSampler");

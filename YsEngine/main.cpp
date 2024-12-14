@@ -35,6 +35,7 @@
 #include "Entity.h"
 #include "Terrain.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "FreeCamera.h"
 #include "PlayerCamera.h"
 
@@ -61,11 +62,14 @@ Shader* pointLightShader;
 std::vector<Entity*> entityList;
 
 Model* mainModel;
+Model* enemyModel;
 Model* currModel;
 
 Player* player;
+Enemy* enemy;
 
 Animator* animator;
+Animator* animator2;
 
 Animation* idleAnim;
 Animation* runAnim;
@@ -158,14 +162,20 @@ int main()
 
 	// Model
 	mainModel = new Model();
+	enemyModel = new Model();
+
 	//std::string modelPath = "world/map.gltf";
 	std::string modelPath = "knight/walkinplace.gltf";
 	mainModel->LoadModel(modelPath);
+	enemyModel->LoadModel(modelPath);
+
 	entityList.push_back(mainModel);
+	entityList.push_back(enemyModel);
 	currModel = mainModel;
 
 	// Player
 	player = new Player(mainModel);
+	enemy = new Enemy(enemyModel);
 
 	// Camera
 	freeCamera = new FreeCamera(glm::vec3(0.f, 0.f, 5.f), 10.f, 0.3f);
@@ -183,6 +193,7 @@ int main()
 
 	// Animator
 	animator = new Animator(nullptr);
+	animator2 = new Animator(runAnim);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -223,6 +234,7 @@ int main()
 
 		if (isPlayMode)
 		{
+			// player
 			player->HandleInput(mainWindow->GetKeys(), deltaTime);
 
 			bool isMoving = player->Move(deltaTime, terrain);
@@ -253,9 +265,13 @@ int main()
 				player->isAttack = false;
 				player->isJumping = false;
 			}
+
+			// enemy
+			enemy->Move(deltaTime, terrain);
 		}
 
 		animator->UpdateAnimation(deltaTime);
+		animator2->UpdateAnimation(deltaTime);
 		// ----------------------------------------
 
 		ImGui_ImplOpenGL3_NewFrame();
@@ -299,27 +315,57 @@ int main()
 			GetModelShaderHandles();
 
 			Model* currModel = mainModel;
+			Model* enemysModel = enemyModel;
 
-			glm::mat4 modelMat = currModel->GetModelMat();
-			glm::mat4 PVM = projMat * viewMat * modelMat;
-			glm::mat3 normalMat = GetNormalMat(modelMat);
-			glUniformMatrix4fv(loc_modelMat, 1, GL_FALSE, glm::value_ptr(modelMat));
-			glUniformMatrix4fv(loc_PVM, 1, GL_FALSE, glm::value_ptr(PVM));
-			glUniformMatrix3fv(loc_normalMat, 1, GL_FALSE, glm::value_ptr(normalMat));
+			{
+				glm::mat4 modelMat = currModel->GetModelMat();
+				glm::mat4 PVM = projMat * viewMat * modelMat;
+				glm::mat3 normalMat = GetNormalMat(modelMat);
+				glUniformMatrix4fv(loc_modelMat, 1, GL_FALSE, glm::value_ptr(modelMat));
+				glUniformMatrix4fv(loc_PVM, 1, GL_FALSE, glm::value_ptr(PVM));
+				glUniformMatrix3fv(loc_normalMat, 1, GL_FALSE, glm::value_ptr(normalMat));
 
-			modelShader->UseEyePos(camPos);
-			modelShader->UseDirectionalLight(directionalLight);
-			modelShader->UsePointLights(pointLights, pointLightCount);
+				modelShader->UseEyePos(camPos);
+				modelShader->UseDirectionalLight(directionalLight);
+				modelShader->UsePointLights(pointLights, pointLightCount);
+
+				modelShader->UseMaterial(mainModel->GetMaterial());
+				modelShader->UseMaterial(enemyModel->GetMaterial());
+
+				const auto& transforms = animator->GetFinalBoneMatrices();
+				modelShader->UseFinalBoneMatrices(transforms);
+
+				glUniform1i(loc_diffuseSampler, 0);
+				glUniform1i(loc_normalSampler, 1);
+
+				mainModel->RenderModel();
+			}
+			{
+				glm::mat4 modelMat = enemysModel->GetModelMat();
+				glm::mat4 PVM = projMat * viewMat * modelMat;
+				glm::mat3 normalMat = GetNormalMat(modelMat);
+				glUniformMatrix4fv(loc_modelMat, 1, GL_FALSE, glm::value_ptr(modelMat));
+				glUniformMatrix4fv(loc_PVM, 1, GL_FALSE, glm::value_ptr(PVM));
+				glUniformMatrix3fv(loc_normalMat, 1, GL_FALSE, glm::value_ptr(normalMat));
+
+				modelShader->UseEyePos(camPos);
+				modelShader->UseDirectionalLight(directionalLight);
+				modelShader->UsePointLights(pointLights, pointLightCount);
+
+				modelShader->UseMaterial(mainModel->GetMaterial());
+				modelShader->UseMaterial(enemyModel->GetMaterial());
+
+				const auto& transforms = animator2->GetFinalBoneMatrices();
+
+				modelShader->UseFinalBoneMatrices(transforms);
+
+				glUniform1i(loc_diffuseSampler, 0);
+				glUniform1i(loc_normalSampler, 1);
+
+				enemyModel->RenderModel();
+			}
 			
-			modelShader->UseMaterial(mainModel->GetMaterial());
 
-			const auto& transforms = animator->GetFinalBoneMatrices();
-			modelShader->UseFinalBoneMatrices(transforms);
-
-			glUniform1i(loc_diffuseSampler, 0);
-			glUniform1i(loc_normalSampler, 1);
-
-			mainModel->RenderModel();
 
 			GLenum error = glGetError();
 			if (error != GL_NO_ERROR)
