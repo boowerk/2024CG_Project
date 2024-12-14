@@ -76,6 +76,9 @@ Animation* runAnim;
 Animation* jumpAnim;
 Animation* attackAnim;
 
+Animation* zombieRunAnim;
+Animation* zombieAttackAnim;
+
 DirectionalLight* directionalLight;
 
 PointLight* pointLights[MAX_POINT_LIGHTS];
@@ -166,8 +169,9 @@ int main()
 
 	//std::string modelPath = "world/map.gltf";
 	std::string modelPath = "knight/walkinplace.gltf";
+	std::string zombieModelPath = "zombie/zombie_walk.gltf";
 	mainModel->LoadModel(modelPath);
-	enemyModel->LoadModel(modelPath);
+	enemyModel->LoadModel(zombieModelPath);
 
 	entityList.push_back(mainModel);
 	entityList.push_back(enemyModel);
@@ -191,9 +195,12 @@ int main()
 	// attackAnim = new Animation("Animations/attack1.gltf", currModel);
 	attackAnim = new Animation("Animations/attack2.gltf", currModel);
 
+	zombieRunAnim = new Animation("Animations/zombie_walk.gltf", enemyModel);
+	zombieAttackAnim = new Animation("Animations/zombie_attack.gltf", enemyModel);
+
 	// Animator
 	animator = new Animator(nullptr);
-	animator2 = new Animator(runAnim);
+	animator2 = new Animator(zombieRunAnim);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();

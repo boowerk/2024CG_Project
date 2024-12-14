@@ -10,7 +10,7 @@
 #include "Model.h"
 #include "Terrain.h"
 
-Enemy::Enemy(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f), JUMP_POWER(0.05f)
+Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), JUMP_POWER(0.05f)
 {
 	this->model = model;
 	groundHeight = 10;
