@@ -224,35 +224,24 @@ int main()
 		{
 			player->HandleInput(mainWindow->GetKeys(), deltaTime);
 
-			if (player->Move(deltaTime, terrain))
-			{
-				// 점프 상태에 따른 애니메이션 변경
-				if (player->isJumping) {
-					// 점프 상태일 때 점프 애니메이션 실행
-					if (animator->GetCurrAnimation() != jumpAnim) {
-						animator->PlayAnimation(jumpAnim);
-					}
-				}
-				else {
-					//// 점프가 끝났다면 run 애니메이션으로 변경
-					if (animator->GetCurrAnimation() != runAnim)
-						animator->PlayAnimation(runAnim);
-				}
+			bool isMoving = player->Move(deltaTime, terrain);
+
+			// 점프 상태에 따라 애니메이션 전환
+			Animation* targetAnim = nullptr;
+
+			if (player->isJumping) {
+				targetAnim = jumpAnim;  // 점프 애니메이션
 			}
-			else
-			{
-				// 점프 상태에 따른 애니메이션 변경
-				if (player->isJumping) {
-					// 점프 상태일 때 점프 애니메이션 실행
-					if (animator->GetCurrAnimation() != jumpAnim) {
-						animator->PlayAnimation(jumpAnim);
-					}
-				}
-				else {
-					if (animator->GetCurrAnimation() != idleAnim)
-						animator->PlayAnimation(idleAnim);
-				}
-				
+			else if (isMoving) {
+				targetAnim = runAnim;   // 달리기 애니메이션
+			}
+			else {
+				targetAnim = idleAnim;  // 대기 애니메이션
+			}
+
+			// 현재 애니메이션과 목표 애니메이션이 다를 경우에만 변경
+			if (animator->GetCurrAnimation() != targetAnim) {
+				animator->PlayAnimation(targetAnim);
 			}
 		}
 
