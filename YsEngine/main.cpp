@@ -133,6 +133,19 @@ void CheckPlayerEnemyCollision(Player* player, Enemy* enemy) {
 	}
 }
 
+void RenderPlayerHealth(Player* player) {
+	int health = player->GetHealth();
+	int maxHealth = player->GetMaxHealth();
+
+	ImGui::Begin("Player Health");
+	ImGui::Text("Health: %d / %d", health, maxHealth);
+
+	// 체력을 프로그래스 바 형태로 렌더링
+	float healthPercentage = (float)health / (float)maxHealth;
+	ImGui::ProgressBar(healthPercentage, ImVec2(200, 20));
+	ImGui::End();
+}
+
 int main()
 {
     // GLFW 초기화
@@ -315,6 +328,9 @@ int main()
 		ImGui::NewFrame();
 
 		ImGui::DockSpaceOverViewport();
+
+		// Render Player Health
+		RenderPlayerHealth(player);
 
 		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
