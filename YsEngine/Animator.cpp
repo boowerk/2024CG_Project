@@ -69,10 +69,12 @@ bool Animator::IsAnimationFinished()
 {
 	if (currentAnimation)
 	{
-		return currentTime >= currentAnimation->GetDuration();
+		// 애니메이션이 끝나는 직전 30ms 정도를 허용하고 종료로 간주 (60fps 기준이라면 1 프레임은 약 16.67ms)
+		return currentTime >= currentAnimation->GetDuration() - 20.f;
 	}
 	return true; // 애니메이션이 없는 경우 종료 상태로 간주
 }
+
 
 std::vector<glm::mat4> Animator::GetFinalBoneMatrices()
 {

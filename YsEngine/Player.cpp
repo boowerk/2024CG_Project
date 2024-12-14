@@ -69,7 +69,7 @@ bool Player::Move(float deltaTime, Terrain* terrain)
 	{
 		upwardSpeed = 0;
 		newPos[1] = groundHeight;
-		isJumping = false;
+		// isJumping = false;
 	}
 
 	model->SetTranslate(newPos);
