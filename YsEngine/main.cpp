@@ -178,7 +178,8 @@ int main()
 	idleAnim = new Animation("Animations/knight_idle.gltf", currModel);
 	runAnim = new Animation("Animations/walkinplace.gltf", currModel);
 	jumpAnim = new Animation("Animations/jump.gltf", currModel);
-	attackAnim = new Animation("Animations/attack1.gltf", currModel);
+	// attackAnim = new Animation("Animations/attack1.gltf", currModel);
+	attackAnim = new Animation("Animations/attack2.gltf", currModel);
 
 	// Animator
 	animator = new Animator(nullptr);

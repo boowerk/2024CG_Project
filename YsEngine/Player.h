@@ -16,6 +16,7 @@ public:
 	float GetRotY();
 	void Jump();
 	void attack();
+	bool canMove();
 	
 	Model* GetModel() { return model; }
 

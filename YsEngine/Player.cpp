@@ -19,19 +19,21 @@ Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f
 
 void Player::HandleInput(bool* keys, float deltaTime)
 {
-	if (keys[GLFW_KEY_W])
-		currMoveSpeed = MOVE_SPEED;
-	else if (keys[GLFW_KEY_S])
-		currMoveSpeed = -MOVE_SPEED;
-	else
-		currMoveSpeed = 0;
+	if(canMove()){
+		if (keys[GLFW_KEY_W])
+			currMoveSpeed = MOVE_SPEED;
+		else if (keys[GLFW_KEY_S])
+			currMoveSpeed = -MOVE_SPEED;
+		else
+			currMoveSpeed = 0;
 
-	if (keys[GLFW_KEY_A])
-		currTurnSpeed = TURN_SPEED;
-	else if (keys[GLFW_KEY_D])
-		currTurnSpeed = -TURN_SPEED;
-	else
-		currTurnSpeed = 0;
+		if (keys[GLFW_KEY_A])
+			currTurnSpeed = TURN_SPEED;
+		else if (keys[GLFW_KEY_D])
+			currTurnSpeed = -TURN_SPEED;
+		else
+			currTurnSpeed = 0;
+	}
 
 	if (keys[GLFW_KEY_SPACE])
 		Jump();
@@ -100,4 +102,12 @@ void Player::attack()
 		return;
 
 	isAttack = true;
+}
+
+bool Player::canMove()
+{
+	// 못 움직이는 경우 추가
+	if (isAttack)
+		return false;
+	return true;
 }
