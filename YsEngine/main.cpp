@@ -168,7 +168,7 @@ int main()
 	enemyModel = new Model();
 
 	//std::string modelPath = "world/map.gltf";
-	std::string modelPath = "knight/walkinplace.gltf";
+	std::string modelPath = "knight/knight.gltf";
 	std::string zombieModelPath = "zombie/zombie_walk.gltf";
 	mainModel->LoadModel(modelPath);
 	enemyModel->LoadModel(zombieModelPath);
