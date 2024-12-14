@@ -85,10 +85,11 @@ bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
 
         model->SetTranslate(pos);
 
-		// 적이 플레이어를 바라보도록 회전
-		float angleToPlayer = glm::degrees(atan2(direction.x, direction.z));
-		glm::vec3 newRotation = glm::vec3(0.0f, angleToPlayer, 0.0f);
-		model->SetRotate(newRotation);
+        // 적이 플레이어를 바라보도록 회전 (기본 회전값 보정 추가)
+        float angleToPlayer = glm::degrees(atan2(direction.x, direction.z));
+        angleToPlayer += 90.0f; // 모델 기본 방향이 +Z가 아닌 경우 보정
+        glm::vec3 newRotation = glm::vec3(0.0f, angleToPlayer, 0.0f);
+        model->SetRotate(newRotation);
     }
 
 
