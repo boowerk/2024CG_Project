@@ -107,6 +107,32 @@ glm::mat3 GetNormalMat(glm::mat4& modelMat);
 void MoveCamera();
 void TogglePlayMode();
 
+// 충돌 검사
+bool CheckCollision(glm::vec3 posA, glm::vec3 posB, float radiusA, float radiusB) {
+	float distance = glm::distance(posA, posB);
+	return distance < (radiusA + radiusB); // 두 반지름의 합보다 거리가 짧으면 충돌
+}
+
+// 플레이어와 적 간 충돌 검사
+void CheckPlayerEnemyCollision(Player* player, Enemy* enemy) {
+	GLfloat* playerCurrPos = player->GetModel()->GetTranslate();
+	GLfloat* enemyCurrPos = enemy->GetModel()->GetTranslate();
+
+	glm::vec3 playerPos(playerCurrPos[0], playerCurrPos[1], playerCurrPos[2]);
+	glm::vec3 enemyPos(enemyCurrPos[0], enemyCurrPos[1], enemyCurrPos[2]);
+
+	float playerRadius = 0.5f; // 플레이어의 반지름 (가정)
+	float enemyRadius = 0.5f;  // 적의 반지름 (가정)
+
+	if (CheckCollision(playerPos, enemyPos, playerRadius, enemyRadius)) {
+		std::cout << "Player and Enemy collided!" << std::endl;
+		// 충돌 후의 로직 (예: 플레이어 체력 감소 등)을 추가
+	}
+	else {
+		std::cout << "Player and Enemy; not colided" << std::endl;
+	}
+}
+
 int main()
 {
     // GLFW 초기화
@@ -272,6 +298,9 @@ int main()
 				player->isAttack = false;
 				player->isJumping = false;
 			}
+
+			// 플레이어와 적 간 충돌 검사
+			CheckPlayerEnemyCollision(player, enemy);
 
 			// enemy
 			enemy->Move(deltaTime, terrain);
