@@ -227,8 +227,10 @@ int main()
 	currCamera = freeCamera;
 
 	// Animation
-	/*idleAnim = new Animation("Animations/Idle.gltf", currModel);
-	runAnim = new Animation("Animations/SlowRun.gltf", currModel);*/
+	/*
+	idleAnim = new Animation("Animations/Idle.gltf", currModel);
+	runAnim = new Animation("Animations/SlowRun.gltf", currModel);
+	*/
 	idleAnim = new Animation("Animations/knight_idle.gltf", currModel);
 	runAnim = new Animation("Animations/walkinplace.gltf", currModel);
 	jumpAnim = new Animation("Animations/jump.gltf", currModel);
@@ -240,6 +242,7 @@ int main()
 
 	// Animator
 	animator = new Animator(nullptr);
+	// TODO : 
 	animator2 = new Animator(zombieRunAnim);
 
 	// Setup Dear ImGui context
@@ -317,7 +320,7 @@ int main()
 			CheckPlayerEnemyCollision(player, enemy);
 
 			// enemy
-			enemy->Move(deltaTime, terrain);
+			enemy->Move(deltaTime, terrain, player);
 		}
 
 		animator->UpdateAnimation(deltaTime);
