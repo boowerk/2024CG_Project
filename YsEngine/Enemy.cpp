@@ -21,6 +21,11 @@ Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), 
 
 	// 랜덤 초기화
 	srand(static_cast<unsigned>(time(0)));
+
+    GLfloat* currPos = model->GetTranslate();
+    glm::vec3 newPos(currPos[0] + 5, currPos[1], currPos[2]);
+
+    model->SetTranslate(newPos);
 }
 
 bool Enemy::Move(float deltaTime, Terrain* terrain)
