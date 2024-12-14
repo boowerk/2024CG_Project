@@ -243,6 +243,11 @@ int main()
 			if (animator->GetCurrAnimation() != targetAnim) {
 				animator->PlayAnimation(targetAnim);
 			}
+
+			// 점프 애니메이션이 끝날 때까지 isJumping 유지
+			if (player->isJumping && animator->IsAnimationFinished()) {
+				player->isJumping = false;
+			}
 		}
 
 		animator->UpdateAnimation(deltaTime);
