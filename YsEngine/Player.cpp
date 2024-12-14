@@ -15,6 +15,27 @@ Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f
 
 	isJumping = false;
 	isAttack = false;
+
+	health = 100; // 초기 체력
+	maxHealth = 100;
+}
+
+void Player::DecreaseHealth(int amount) {
+	health -= amount;
+	if (health < 0) health = 0;
+}
+
+void Player::IncreaseHealth(int amount) {
+	health += amount;
+	if (health > maxHealth) health = maxHealth;
+}
+
+int Player::GetHealth() const {
+	return health;
+}
+
+int Player::GetMaxHealth() const {
+	return maxHealth;
 }
 
 void Player::HandleInput(bool* keys, float deltaTime)
