@@ -9,11 +9,13 @@ class Player
 public:
 	Player(Model* model);
 	bool isJumping;
+	bool isAttack;
 
 	void HandleInput(bool* keys, float deltaTime);
 	bool Move(float deltaTime, Terrain* terrain);
 	float GetRotY();
 	void Jump();
+	void attack();
 	
 	Model* GetModel() { return model; }
 

@@ -229,7 +229,10 @@ int main()
 			// 점프 상태에 따라 애니메이션 전환
 			Animation* targetAnim = nullptr;
 
-			if (player->isJumping) {
+			if (player->isAttack) {
+				targetAnim = attackAnim;  // 공격 애니메이션
+			}
+			else if (player->isJumping) {
 				targetAnim = jumpAnim;  // 점프 애니메이션
 			}
 			else if (isMoving) {
@@ -244,8 +247,9 @@ int main()
 				animator->PlayAnimation(targetAnim);
 			}
 
-			// 점프 애니메이션이 끝날 때까지 isJumping 유지
-			if (player->isJumping && animator->IsAnimationFinished()) {
+			// 애니메이션이 끝날 때
+			if (animator->IsAnimationFinished()) {
+				player->isAttack = false;
 				player->isJumping = false;
 			}
 		}

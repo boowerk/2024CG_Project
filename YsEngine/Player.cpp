@@ -14,6 +14,7 @@ Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f
 	upwardSpeed = 0;
 
 	isJumping = false;
+	isAttack = false;
 }
 
 void Player::HandleInput(bool* keys, float deltaTime)
@@ -34,6 +35,8 @@ void Player::HandleInput(bool* keys, float deltaTime)
 
 	if (keys[GLFW_KEY_SPACE])
 		Jump();
+	if (keys[GLFW_KEY_K])
+		attack();
 }
 
 bool Player::Move(float deltaTime, Terrain* terrain)
@@ -89,4 +92,12 @@ void Player::Jump()
 	
 	upwardSpeed = JUMP_POWER;
 	isJumping = true;
+}
+
+void Player::attack()
+{
+	if (isAttack)
+		return;
+
+	isAttack = true;
 }
