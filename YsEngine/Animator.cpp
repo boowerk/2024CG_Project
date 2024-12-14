@@ -65,6 +65,15 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 	}
 }
 
+bool Animator::IsAnimationFinished()
+{
+	if (currentAnimation)
+	{
+		return currentTime >= currentAnimation->GetDuration();
+	}
+	return true; // 애니메이션이 없는 경우 종료 상태로 간주
+}
+
 std::vector<glm::mat4> Animator::GetFinalBoneMatrices()
 {
 	return finalBoneMatrices;

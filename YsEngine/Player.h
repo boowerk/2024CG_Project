@@ -8,14 +8,17 @@ class Player
 {
 public:
 	Player(Model* model);
+	bool isJumping;
+
 	void HandleInput(bool* keys, float deltaTime);
 	bool Move(float deltaTime, Terrain* terrain);
 	float GetRotY();
+	void Jump();
 	
 	Model* GetModel() { return model; }
 
 private:
-	void Jump();
+	
 
 	Model* model;
 
@@ -29,6 +32,6 @@ private:
 	float upwardSpeed;
 	float groundHeight;
 
-	bool isJumping;
+	// bool isJumping;
 };
 

@@ -69,6 +69,8 @@ Animator* animator;
 
 Animation* idleAnim;
 Animation* runAnim;
+Animation* jumpAnim;
+Animation* attackAnim;
 
 DirectionalLight* directionalLight;
 
@@ -173,8 +175,10 @@ int main()
 	// Animation
 	/*idleAnim = new Animation("Animations/Idle.gltf", currModel);
 	runAnim = new Animation("Animations/SlowRun.gltf", currModel);*/
-	idleAnim = new Animation("Animations/walkinplace.gltf", currModel);
+	idleAnim = new Animation("Animations/knight_idle.gltf", currModel);
 	runAnim = new Animation("Animations/walkinplace.gltf", currModel);
+	jumpAnim = new Animation("Animations/jump.gltf", currModel);
+	attackAnim = new Animation("Animations/attack1.gltf", currModel);
 
 	// Animator
 	animator = new Animator(nullptr);
@@ -219,15 +223,36 @@ int main()
 		if (isPlayMode)
 		{
 			player->HandleInput(mainWindow->GetKeys(), deltaTime);
+
 			if (player->Move(deltaTime, terrain))
 			{
-				if(animator->GetCurrAnimation() != runAnim)
-					animator->PlayAnimation(runAnim);
+				// 점프 상태에 따른 애니메이션 변경
+				if (player->isJumping) {
+					// 점프 상태일 때 점프 애니메이션 실행
+					if (animator->GetCurrAnimation() != jumpAnim) {
+						animator->PlayAnimation(jumpAnim);
+					}
+				}
+				else {
+					//// 점프가 끝났다면 run 애니메이션으로 변경
+					if (animator->GetCurrAnimation() != runAnim)
+						animator->PlayAnimation(runAnim);
+				}
 			}
 			else
 			{
-				if (animator->GetCurrAnimation() != idleAnim)
-					animator->PlayAnimation(idleAnim);
+				// 점프 상태에 따른 애니메이션 변경
+				if (player->isJumping) {
+					// 점프 상태일 때 점프 애니메이션 실행
+					if (animator->GetCurrAnimation() != jumpAnim) {
+						animator->PlayAnimation(jumpAnim);
+					}
+				}
+				else {
+					if (animator->GetCurrAnimation() != idleAnim)
+						animator->PlayAnimation(idleAnim);
+				}
+				
 			}
 		}
 
@@ -259,11 +284,11 @@ int main()
 		skybox->DrawSkybox(viewMat, projMat);
 
 		
-		/*terrain->UseShader();
+		terrain->UseShader();
 		terrain->GetShader()->UseDirectionalLight(directionalLight);
 		terrain->GetShader()->UsePointLights(pointLights, pointLightCount);
 		terrain->GetShader()->UseEyePos(camPos);
-		terrain->DrawTerrain(viewMat, projMat);*/
+		terrain->DrawTerrain(viewMat, projMat);
 		
 
 		pointLightShader->UseShader();

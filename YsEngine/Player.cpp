@@ -13,7 +13,7 @@ Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f
 	groundHeight = 10;
 	upwardSpeed = 0;
 
-	isJumping = true;
+	isJumping = false;
 }
 
 void Player::HandleInput(bool* keys, float deltaTime)
