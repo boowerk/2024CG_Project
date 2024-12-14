@@ -127,6 +127,7 @@ void CheckPlayerEnemyCollision(Player* player, Enemy* enemy) {
 	if (CheckCollision(playerPos, enemyPos, playerRadius, enemyRadius)) {
 		std::cout << "Player and Enemy collided!" << std::endl;
 		// 충돌 후의 로직 (예: 플레이어 체력 감소 등)을 추가
+		player->DecreaseHealth(10); // 체력을 감소시킴
 	}
 	else {
 		std::cout << "Player and Enemy; not colided" << std::endl;
