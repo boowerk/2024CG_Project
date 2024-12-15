@@ -22,7 +22,7 @@ Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), 
 	currTurnSpeed = 0;           // 초기 회전 속도는 0
 
     chaseSpeed = MOVE_SPEED;    // 추적 속도 (수정 가능)
-    detectionRange = 10.0f;      // 감지 범위 (수정 가능)
+    detectionRange = 20.0f;      // 감지 범위 (수정 가능)
 
 	// 랜덤 초기화
 	srand(static_cast<unsigned>(time(0)));
@@ -35,72 +35,73 @@ Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), 
 
 bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
 {
-    // 랜덤 방향 변경
-    timeSinceLastDirChange += deltaTime;
-    if (timeSinceLastDirChange >= changeDirectionTime)
-    {
-        // 새 방향 설정 (랜덤한 회전 속도)
-        currTurnSpeed = static_cast<float>(rand() % 360 - 180); // -180 ~ +180도
-        timeSinceLastDirChange = 0.f;  // 타이머 초기화
-    }
-
-    // 회전
-    GLfloat* currRot = model->GetRotate();
-    float rotation = currTurnSpeed * deltaTime;
-
-    float newRotY = currRot[1] + rotation;
-    if (newRotY > 180)
-        newRotY -= 360.f;
-    if (newRotY < -180.f)
-        newRotY += 360.f;
-
-    glm::vec3 newRot(currRot[0], newRotY, currRot[2]);
-    model->SetRotate(newRot);
-
-    // 이동
+    // 현재 적의 위치와 회전 상태 가져오기
     GLfloat* currPos = model->GetTranslate();
-    float distance = currMoveSpeed * deltaTime;
+    GLfloat* currRot = model->GetRotate();
+    glm::vec3 enemyPos(currPos[0], currPos[1], currPos[2]);
+    glm::vec3 enemyRot(currRot[0], currRot[1], currRot[2]);
 
-    float dx = distance * sinf(glm::radians(newRotY));
-    float dz = distance * cosf(glm::radians(newRotY));
-
-    upwardSpeed -= GRAVITY * deltaTime;
-
-    glm::vec3 newPos(currPos[0] + dx, currPos[1] + upwardSpeed, currPos[2] + dz);
-
+    // 플레이어 위치 가져오기
     GLfloat* playerCurrPos = player->GetModel()->GetTranslate();
-
     glm::vec3 playerPos(playerCurrPos[0], playerCurrPos[1], playerCurrPos[2]);
 
-    float distanceToPlayer = GetDistanceBetween(newPos, playerPos);
+    // 플레이어와의 거리 계산
+    float distanceToPlayer = GetDistanceBetween(enemyPos, playerPos);
 
-    if (distanceToPlayer <= detectionRange) {
-        // 플레이어 방향으로 이동
-        glm::vec3 direction = glm::normalize(playerPos - newPos);
-        glm::vec3 pos = newPos + direction * chaseSpeed * deltaTime;
+    if (distanceToPlayer <= detectionRange)
+    {
+        // **플레이어 추적 로직**
+        glm::vec3 direction = glm::normalize(playerPos - enemyPos); // 방향 계산
+        glm::vec3 newPos = enemyPos + direction * chaseSpeed * deltaTime;
 
-        // 적의 높이 업데이트 (Terrain 위에 있게)
-        float groundHeight = terrain->GetHeight(pos.x, pos.z);
-        pos.y = groundHeight;
+        // Terrain 높이 보정
+        float groundHeight = terrain->GetHeight(newPos.x, newPos.z);
+        newPos.y = groundHeight;
 
-        model->SetTranslate(pos);
+        model->SetTranslate(newPos);
 
-        // 적이 플레이어를 바라보도록 회전 (기본 회전값 보정 추가)
+        // 적이 플레이어를 바라보도록 회전
         float angleToPlayer = glm::degrees(atan2(direction.x, direction.z));
-        angleToPlayer += 90.0f; // 모델 기본 방향이 +Z가 아닌 경우 보정
-        glm::vec3 newRotation = glm::vec3(0.0f, angleToPlayer, 0.0f);
+        glm::vec3 newRotation(0.0f, angleToPlayer, 0.0f);
         model->SetRotate(newRotation);
     }
-
-
-    groundHeight = terrain->GetHeight(currPos[0], currPos[2]);
-    if (newPos[1] <= groundHeight) // 땅에 닿았다면
+    else
     {
-        upwardSpeed = 0;
-        newPos[1] = groundHeight;
-    }
+        // **랜덤 이동 로직**
+        timeSinceLastDirChange += deltaTime;
+        if (timeSinceLastDirChange >= changeDirectionTime)
+        {
+            currTurnSpeed = static_cast<float>(rand() % 360 - 180); // -180 ~ +180도
+            timeSinceLastDirChange = 0.f;
+        }
 
-    model->SetTranslate(newPos);
+        // 랜덤 회전
+        float rotation = currTurnSpeed * deltaTime;
+        float newRotY = enemyRot.y + rotation;
+        if (newRotY > 180.f) newRotY -= 360.f;
+        if (newRotY < -180.f) newRotY += 360.f;
+
+        enemyRot.y = newRotY;
+        model->SetRotate(enemyRot);
+
+        // 랜덤 이동
+        float distance = currMoveSpeed * deltaTime;
+        float dx = distance * sinf(glm::radians(enemyRot.y));
+        float dz = distance * cosf(glm::radians(enemyRot.y));
+
+        upwardSpeed -= GRAVITY * deltaTime;
+        glm::vec3 newPos(enemyPos.x + dx, enemyPos.y + upwardSpeed, enemyPos.z + dz);
+
+        // Terrain 높이 보정
+        float groundHeight = terrain->GetHeight(newPos.x, newPos.z);
+        if (newPos.y <= groundHeight)
+        {
+            upwardSpeed = 0;
+            newPos.y = groundHeight;
+        }
+
+        model->SetTranslate(newPos);
+    }
 
     return currMoveSpeed != 0;
 }

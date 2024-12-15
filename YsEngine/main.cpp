@@ -244,7 +244,7 @@ int main()
 	// Animator
 	animator = new Animator(nullptr);
 	// TODO : 
-	animator2 = new Animator(zombieAttackAnim);
+	animator2 = new Animator(zombieRunAnim);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
