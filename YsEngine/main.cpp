@@ -344,15 +344,14 @@ int main()
 				// 현재 애니메이션과 목표 애니메이션이 다를 경우에만 변경
 				if (animator2->GetCurrAnimation() != targetAnim) {
 					animator2->PlayAnimation(targetAnim);
+					player->isGetHit = false;
+					enemy->isAttack = false;
 				}
 
 				// 애니메이션이 한번 진행되면 최소 1번 출력 보장
-				if (animator2->IsAnimationFinished(500.f)) {
-					// 공격 애니메이션이 끝난 경우
-					if (enemy->isAttack) {
-						enemy->isAttack = false;
-						player->isGetHit = true;
-					}
+				if (animator2->IsAnimationFinished(500.f) && enemy->isAttack) {
+					enemy->isAttack = false;
+					player->isGetHit = true;
 				}
 			}
 
