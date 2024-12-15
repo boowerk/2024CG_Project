@@ -18,12 +18,13 @@ Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), 
 	groundHeight = 10;
 	upwardSpeed = 0;
 	isAttack = false;
+    isMoving = false;
 	currMoveSpeed = MOVE_SPEED;  // 기본 이동 속도 설정
 	currTurnSpeed = 0;           // 초기 회전 속도는 0
 
     chaseSpeed = MOVE_SPEED;    // 추적 속도 (수정 가능)
     detectionRange = 20.0f;      // 감지 범위 (수정 가능)
-    attackRange = 5.f;          // 공격 사거리
+    attackRange = 1.3f;          // 공격 사거리
 
 	// 랜덤 초기화
 	srand(static_cast<unsigned>(time(0)));
@@ -36,6 +37,8 @@ Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), 
 
 bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
 {
+    isMoving = true;
+
     // 현재 적의 위치와 회전 상태 가져오기
     GLfloat* currPos = model->GetTranslate();
     GLfloat* currRot = model->GetRotate();
@@ -69,8 +72,10 @@ bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
     }
     else if (distanceToPlayer <= attackRange)
     {
-        // 멈춘 상태, 추가 동작이 필요하면 여기에 작성
+        // 멈춘 상태, (공격 애니메이션 출력)
         currMoveSpeed = 0.0f; // 멈춤
+        isMoving = false;
+        attack();
     }
     else
     {

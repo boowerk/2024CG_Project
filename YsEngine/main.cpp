@@ -286,42 +286,66 @@ int main()
 		if (isPlayMode)
 		{
 			// player
-			player->HandleInput(mainWindow->GetKeys(), deltaTime);
+			{
+				player->HandleInput(mainWindow->GetKeys(), deltaTime);
 
-			bool isMoving = player->Move(deltaTime, terrain);
+				bool isMoving = player->Move(deltaTime, terrain);
 
-			// 점프 상태에 따라 애니메이션 전환
-			Animation* targetAnim = nullptr;
+				// 점프 상태에 따라 애니메이션 전환
+				Animation* targetAnim = nullptr;
 
-			if (player->isAttack) {
-				targetAnim = attackAnim;  // 공격 애니메이션
-			}
-			else if (player->isJumping) {
-				targetAnim = jumpAnim;  // 점프 애니메이션
-			}
-			else if (isMoving) {
-				targetAnim = runAnim;   // 달리기 애니메이션
-			}
-			else {
-				targetAnim = idleAnim;  // 대기 애니메이션
-			}
+				if (player->isAttack) {
+					targetAnim = attackAnim;  // 공격 애니메이션
+				}
+				else if (player->isJumping) {
+					targetAnim = jumpAnim;  // 점프 애니메이션
+				}
+				else if (isMoving) {
+					targetAnim = runAnim;   // 달리기 애니메이션
+				}
+				else {
+					targetAnim = idleAnim;  // 대기 애니메이션
+				}
 
-			// 현재 애니메이션과 목표 애니메이션이 다를 경우에만 변경
-			if (animator->GetCurrAnimation() != targetAnim) {
-				animator->PlayAnimation(targetAnim);
-			}
+				// 현재 애니메이션과 목표 애니메이션이 다를 경우에만 변경
+				if (animator->GetCurrAnimation() != targetAnim) {
+					animator->PlayAnimation(targetAnim);
+				}
 
-			// 애니메이션이 끝날 때
-			if (animator->IsAnimationFinished()) {
-				player->isAttack = false;
-				player->isJumping = false;
+				// 애니메이션이 한번 진행되면 최소 1번 출력 보장
+				if (animator->IsAnimationFinished()) {
+					player->isAttack = false;
+					player->isJumping = false;
+				}
 			}
 
 			// 플레이어와 적 간 충돌 검사
 			CheckPlayerEnemyCollision(player, enemy);
 
 			// enemy
-			enemy->Move(deltaTime, terrain, player);
+			{
+				enemy->Move(deltaTime, terrain, player);
+
+				Animation* targetAnim = nullptr;
+
+				if (enemy->isAttack) {
+					targetAnim = zombieAttackAnim;  // 공격 애니메이션
+				}
+				if (enemy->isMoving) {
+					targetAnim = zombieRunAnim;
+				}
+
+				// 현재 애니메이션과 목표 애니메이션이 다를 경우에만 변경
+				if (animator2->GetCurrAnimation() != targetAnim) {
+					animator2->PlayAnimation(targetAnim);
+				}
+
+				// 애니메이션이 한번 진행되면 최소 1번 출력 보장
+				if (animator->IsAnimationFinished()) {
+					enemy->isAttack = false;
+				}
+			}
+
 		}
 
 		animator->UpdateAnimation(deltaTime);

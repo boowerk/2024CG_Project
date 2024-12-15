@@ -10,6 +10,7 @@ class Enemy
 public:
 	Enemy(Model* model);
 	bool isAttack;
+	bool isMoving;
 
 	bool Move(float deltaTime, Terrain* terrain, Player* player);
 	float GetRotY();
