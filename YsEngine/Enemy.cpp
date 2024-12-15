@@ -23,6 +23,7 @@ Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), 
 
     chaseSpeed = MOVE_SPEED;    // 추적 속도 (수정 가능)
     detectionRange = 20.0f;      // 감지 범위 (수정 가능)
+    attackRange = 5.f;          // 공격 사거리
 
 	// 랜덤 초기화
 	srand(static_cast<unsigned>(time(0)));
@@ -48,7 +49,8 @@ bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
     // 플레이어와의 거리 계산
     float distanceToPlayer = GetDistanceBetween(enemyPos, playerPos);
 
-    if (distanceToPlayer <= detectionRange)
+    // 적이 플레이어와의 특정 거리 이상일 때만 이동
+    if (distanceToPlayer > attackRange && distanceToPlayer <= detectionRange)
     {
         // **플레이어 추적 로직**
         glm::vec3 direction = glm::normalize(playerPos - enemyPos); // 방향 계산
@@ -64,6 +66,11 @@ bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
         float angleToPlayer = glm::degrees(atan2(direction.x, direction.z));
         glm::vec3 newRotation(0.0f, angleToPlayer, 0.0f);
         model->SetRotate(newRotation);
+    }
+    else if (distanceToPlayer <= attackRange)
+    {
+        // 멈춘 상태, 추가 동작이 필요하면 여기에 작성
+        currMoveSpeed = 0.0f; // 멈춤
     }
     else
     {

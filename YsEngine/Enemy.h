@@ -31,6 +31,7 @@ private:
 
 	float chaseSpeed;					// 플레이어를 쫓아갈 때의 속도
 	float detectionRange;				// 플레이어를 감지할 수 있는 범위
+	float attackRange;					// 공격 사거리
 
 	const float MOVE_SPEED;
 	const float TURN_SPEED;
