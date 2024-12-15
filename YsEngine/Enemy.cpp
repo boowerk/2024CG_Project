@@ -79,6 +79,7 @@ bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
     }
     else
     {
+        isMoving = true;
         // **랜덤 이동 로직**
         timeSinceLastDirChange += deltaTime;
         if (timeSinceLastDirChange >= changeDirectionTime)
