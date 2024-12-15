@@ -11,6 +11,7 @@ public:
 	Enemy(Model* model);
 	bool isAttack;
 	bool isMoving;
+	bool isGetHit;
 
 	bool Move(float deltaTime, Terrain* terrain, Player* player);
 	float GetRotY();
@@ -21,10 +22,9 @@ public:
 	float GetDistanceBetween(glm::vec3 posA, glm::vec3 posB);
 
 	Model* GetModel() { return model; }
+	Model* model;
 
 private:
-
-	Model* model;
 
 	// Enemy 클래스의 멤버 변수
 	float timeSinceLastDirChange = 0.f;  // 방향 변경을 위한 타이머

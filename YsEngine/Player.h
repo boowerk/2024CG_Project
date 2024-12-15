@@ -16,7 +16,7 @@ public:
 	bool Move(float deltaTime, Terrain* terrain);
 	float GetRotY();
 	void Jump();
-	void attack();
+	bool attack(float * enmey);
 	bool canMove();
 	
 	void DecreaseHealth(int amount); // 체력을 감소
@@ -40,6 +40,7 @@ private:
 	float currTurnSpeed;
 	float upwardSpeed;
 	float groundHeight;
+	float attackRange;					// 공격 사거리
 
 	int health;	// 플레이어의 현재 체력
 	int maxHealth;	// 플레이어의 최대 체력

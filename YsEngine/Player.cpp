@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Model.h"
+#include "Enemy.h"
 #include "Terrain.h"
 
 Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f), JUMP_POWER(0.05f)
@@ -12,6 +13,7 @@ Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f
 	this->model = model;
 	groundHeight = 10;
 	upwardSpeed = 0;
+	attackRange = 2.f;
 
 	isJumping = false;
 	isAttack = false;
@@ -19,6 +21,11 @@ Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f
 
 	health = 100; // 초기 체력
 	maxHealth = 100;
+
+	GLfloat* currSize = model->GetScale();
+	const float sizeOffset = 0.6f;
+	glm::vec3 newSize = glm::vec3(currSize[0] * sizeOffset, currSize[1] * sizeOffset, currSize[2] * sizeOffset);
+	model->SetScale(newSize);
 }
 
 void Player::DecreaseHealth(int amount) {
@@ -59,8 +66,8 @@ void Player::HandleInput(bool* keys, float deltaTime)
 
 	if (keys[GLFW_KEY_SPACE])
 		Jump();
-	if (keys[GLFW_KEY_K])
-		attack();
+	/*if (keys[GLFW_KEY_K])
+		attack();*/
 }
 
 bool Player::Move(float deltaTime, Terrain* terrain)
@@ -118,12 +125,32 @@ void Player::Jump()
 	isJumping = true;
 }
 
-void Player::attack()
+bool Player::attack(float* enmey)
 {
-	if (isAttack)
-		return;
+	/*if (isAttack)
+		return true;*/
 
 	isAttack = true;
+
+	// 플레이어 위치 가져오기
+	GLfloat* playerCurrPos = model->GetTranslate();
+	glm::vec3 playerPos(playerCurrPos[0], playerCurrPos[1], playerCurrPos[2]);
+
+	// enemy 위치 가져오기
+	glm::vec3 enemyPos(enmey[0], enmey[1], enmey[2]);
+
+	// 플레이어와의 거리 계산
+	float distanceToEnemy = glm::distance(enemyPos, playerPos);
+
+	// 적이 플레이어와의 공격 사거리 안에 있는 경우
+	if (distanceToEnemy < attackRange) {
+		std::cout << "Player attack successful" << std::endl;
+		return true;
+	}
+	else {
+		std::cout << "Player is out of attack range" << std::endl;
+		return false;
+	}
 }
 
 bool Player::canMove()

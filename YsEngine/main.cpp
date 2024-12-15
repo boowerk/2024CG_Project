@@ -79,6 +79,7 @@ Animation* getHitAnim;
 
 Animation* zombieRunAnim;
 Animation* zombieAttackAnim;
+Animation* zombieGetHitAnim;
 
 DirectionalLight* directionalLight;
 
@@ -242,6 +243,7 @@ int main()
 
 	zombieRunAnim = new Animation("Animations/zombie_walk.gltf", enemyModel);
 	zombieAttackAnim = new Animation("Animations/zombie_attack.gltf", enemyModel);
+	zombieGetHitAnim = new Animation("Animations/zombie_get_hit.gltf", enemyModel);
 
 	// Animator
 	animator = new Animator(nullptr);
@@ -290,6 +292,10 @@ int main()
 			// player
 			{
 				player->HandleInput(mainWindow->GetKeys(), deltaTime);
+				const bool* keys = mainWindow->GetKeys();
+				if (keys[GLFW_KEY_K]) {		// 공격한경우
+					enemy->isGetHit = player->attack(enemy->model->GetTranslate());
+				}
 
 				bool isMoving = player->Move(deltaTime, terrain);
 
@@ -315,11 +321,15 @@ int main()
 				// 현재 애니메이션과 목표 애니메이션이 다를 경우에만 변경
 				if (animator->GetCurrAnimation() != targetAnim) {
 					animator->PlayAnimation(targetAnim);
+					enemy->isGetHit = false;
+					player->isAttack = false;
 				}
 
 				// 애니메이션이 한번 진행되면 최소 1번 출력 보장
 				if (animator->IsAnimationFinished(20.f)) {
-					player->isAttack = false;
+					if (player->isAttack) {
+						player->isAttack = false;
+					}
 					player->isJumping = false;
 					player->isGetHit = false;
 				}
@@ -334,10 +344,13 @@ int main()
 
 				Animation* targetAnim = nullptr;
 
-				if (enemy->isAttack) {
+				if (enemy->isGetHit) {
+					targetAnim = zombieGetHitAnim;  // 공격 받는 애니메이션
+				}
+				else if (enemy->isAttack) {
 					targetAnim = zombieAttackAnim;  // 공격 애니메이션
 				}
-				if (enemy->isMoving) {
+				else if (enemy->isMoving) {
 					targetAnim = zombieRunAnim;
 				}
 
@@ -352,6 +365,7 @@ int main()
 				if (animator2->IsAnimationFinished(500.f) && enemy->isAttack) {
 					enemy->isAttack = false;
 					player->isGetHit = true;
+					enemy->isGetHit = false;
 				}
 			}
 

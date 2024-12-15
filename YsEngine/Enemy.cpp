@@ -37,6 +37,9 @@ Enemy::Enemy(Model* model) : MOVE_SPEED(1.f), TURN_SPEED(200.f), GRAVITY(0.2f), 
 
 bool Enemy::Move(float deltaTime, Terrain* terrain, Player* player)
 {
+    if (isGetHit)
+        return true;
+
     isMoving = true;
 
     // 현재 적의 위치와 회전 상태 가져오기
