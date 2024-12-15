@@ -75,6 +75,7 @@ Animation* idleAnim;
 Animation* runAnim;
 Animation* jumpAnim;
 Animation* attackAnim;
+Animation* getHitAnim;
 
 Animation* zombieRunAnim;
 Animation* zombieAttackAnim;
@@ -237,6 +238,7 @@ int main()
 	jumpAnim = new Animation("Animations/jump.gltf", currModel);
 	// attackAnim = new Animation("Animations/attack1.gltf", currModel);
 	attackAnim = new Animation("Animations/attack2.gltf", currModel);
+	getHitAnim = new Animation("Animations/knight_get_hit.gltf", currModel);
 
 	zombieRunAnim = new Animation("Animations/zombie_walk.gltf", enemyModel);
 	zombieAttackAnim = new Animation("Animations/zombie_attack.gltf", enemyModel);
@@ -294,7 +296,10 @@ int main()
 				// 점프 상태에 따라 애니메이션 전환
 				Animation* targetAnim = nullptr;
 
-				if (player->isAttack) {
+				if (player->isGetHit) {
+					targetAnim = getHitAnim;  // 공격 받는 애니메이션
+				}
+				else if (player->isAttack) {
 					targetAnim = attackAnim;  // 공격 애니메이션
 				}
 				else if (player->isJumping) {
@@ -313,9 +318,10 @@ int main()
 				}
 
 				// 애니메이션이 한번 진행되면 최소 1번 출력 보장
-				if (animator->IsAnimationFinished()) {
+				if (animator->IsAnimationFinished(20.f)) {
 					player->isAttack = false;
 					player->isJumping = false;
+					player->isGetHit = false;
 				}
 			}
 
@@ -341,8 +347,12 @@ int main()
 				}
 
 				// 애니메이션이 한번 진행되면 최소 1번 출력 보장
-				if (animator->IsAnimationFinished()) {
-					enemy->isAttack = false;
+				if (animator2->IsAnimationFinished(500.f)) {
+					// 공격 애니메이션이 끝난 경우
+					if (enemy->isAttack) {
+						enemy->isAttack = false;
+						player->isGetHit = true;
+					}
 				}
 			}
 

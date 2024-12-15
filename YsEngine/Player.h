@@ -10,6 +10,7 @@ public:
 	Player(Model* model);
 	bool isJumping;
 	bool isAttack;
+	bool isGetHit;
 
 	void HandleInput(bool* keys, float deltaTime);
 	bool Move(float deltaTime, Terrain* terrain);

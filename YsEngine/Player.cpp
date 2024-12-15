@@ -15,6 +15,7 @@ Player::Player(Model* model) : MOVE_SPEED(10.f), TURN_SPEED(200.f), GRAVITY(0.2f
 
 	isJumping = false;
 	isAttack = false;
+	isGetHit = false;
 
 	health = 100; // 초기 체력
 	maxHealth = 100;
